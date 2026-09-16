@@ -1,7 +1,6 @@
 # HaploHash
 
 Haploblock-level functional annotation + privacy-preserving genomic hashes.
-Hackathon, 16–18 Sep 2026.
 
 ## Flow
 
@@ -18,11 +17,10 @@ data.haploblocks.org              alphagenome.google/downloads
        lift-weighted          re-identification attack
 ```
 
-Team whiteboard the flow came from:
 
 ![workflow](docs/image.png)
 
-## What each stage is
+## Stages
 
 **Haploblocks** — genome cut into recombination-defined regions, so each block is a unit that is actually inherited together.
 - 39,141 blocks, GRCh38, chr1–22 + chrX
@@ -64,7 +62,7 @@ Lead: Mauricio · Writer: Aditya
 
 ## Data
 
-- 1000G — 2,548 individuals, 26 populations, from `data.haploblocks.org`
+- 1000G - 2,548 individuals, 26 populations, from `data.haploblocks.org`
 - hg38 on both sides, no liftover needed
 - UKB pending access; published haploblocks are 1000G only, so UKB haplotypes must be assigned to existing clusters rather than reclustered
 
