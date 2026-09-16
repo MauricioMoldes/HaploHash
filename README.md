@@ -41,3 +41,7 @@ Circular, excluded: PhastCons, Cactus, allele frequency (AVI inputs); recombinat
 ## Data
 
 1000G — 2,548 individuals, 26 populations, `data.haploblocks.org`. hg38, SNVs only. UKB pending.
+
+## annotate_atlas/
+
+Scrapes haploblock intervals from data.haploblocks.org into a sorted, overlap-checked `blocks.bed` (39,074 blocks, hg38, vs ~39,141 expected). `score_blocks.py` tabix-queries AlphaGenome Atlas AVI PHRED scores per block, writing `block_scores.tsv` (n_snv, avi_top1, avi_dens, length_kb; PHRED>=20 pooled unsigned). AVI column indices are a TODO pending real file access on the cluster VM.
