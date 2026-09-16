@@ -1,6 +1,6 @@
 # HaploHash
 
-# Members
+## Members
 1. David Bonet
 2. Mina 
 3. Markus Marandi
@@ -9,6 +9,6 @@
 6. Mauricio Moldes
 7. Aditya Kumar Karna
 
-# Our workflow
+## Our workflow
 
 ![graph](docs/image.png)
