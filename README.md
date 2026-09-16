@@ -1,4 +1,4 @@
-# Pathway_analysis_into_graphs
+# HaploHash
 
 # Members
 1. David Bonet
