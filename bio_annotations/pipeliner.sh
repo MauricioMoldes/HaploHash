@@ -1,9 +1,11 @@
 ##Pipeline
 set -euo pipefail
+
 #0. Input files 
 ##reference genome (fasta/gtf)
-REFERENCE="/dcai/projects/iu_0142/ref_genome/hg38.fna"
-GTF="/dcai/projects/iu_0142/ref_genome/hg38.knownGene.gtf"
+REFERENCE="/dcai/projects/iu_0142/team11/ref_genome/hg38.fna"
+GTF="/dcai/projects/iu_0142/team11/ref_genome/hg38.knownGene.gtf"
+
 ##haploblocks of interest, maybe a dir makes more sense
 HAPLOBLOCKS_DIR="/dcai/projects/iu_0142/team11/data/haploblock_sequences/1000G/chr22/clusters"
 
@@ -17,11 +19,13 @@ command -v minimap2 >/dev/null 2>&1 || {
     echo "ERROR: minimap2 not found"
     exit 1
 }
+
 ##b. samtools
 command -v samtools >/dev/null 2>&1 || {
     echo "ERROR: samtools not found"
     exit 1
 }
+
 ##c. bedtools
 command -v bedtools >/dev/null 2>&1 || {
     echo "ERROR: bedtools not found"
@@ -56,13 +60,14 @@ fi
 #4. Process each haploblock
 for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
     [[ -e "$HAPLOBLOCKS" ]] || continue
+
     #Name change
     NAME=$(basename "$HAPLOBLOCKS" _all_seqs.fasta)
 
     #4.1 Prepare FASTA for mapping
     echo ">>> Checking FASTA..."
     CLEAN_FASTA="${OUTDIR}/${NAME}.clean.fasta"
-    
+
     awk '
     /^>/ {
         if (seen && len > 0) {
@@ -86,18 +91,25 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
         }
     }
     ' "$HAPLOBLOCKS" > "$CLEAN_FASTA"
-    
+
+    # Skip files with no valid sequences
+    if [ ! -s "$CLEAN_FASTA" ] || ! grep -q '^>' "$CLEAN_FASTA"; then
+        echo "WARNING: No valid sequences found in $NAME. Skipping."
+        rm -f "$CLEAN_FASTA"
+        continue
+    fi
+
     #4.2 Map haploblocks to GRCh38
     echo ">>> Mapping haploblocks..."
-    
+
     minimap2 \
         -ax sr \
         "${REFERENCE}.mmi" \
         "${CLEAN_FASTA}" \
         > "${OUTDIR}/${NAME}.sam"
-    
+
     rm "$CLEAN_FASTA"
-    
+
     #4.3 SAM == sorted BAM
     echo ">>> Converting SAM to sorted BAM..."
 
@@ -111,6 +123,7 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
 
     #4.4 Keep primary alignments
     echo ">>> Extracting primary alignments..."
+
     samtools view \
         -b \
         -F 256 \
@@ -121,6 +134,7 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
 
     #4.5 BAM == BED
     echo ">>> Creating BED..."
+
     bedtools bamtobed \
         -i "${OUTDIR}/${NAME}.primary.bam" \
         -name \
@@ -128,6 +142,7 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
 
     #4.6 Haploblock == genes
     echo ">>> Annotating haploblocks with genes..."
+
     bedtools intersect \
         -a "${OUTDIR}/${NAME}.bed" \
         -b "${GENES_GTF}" \
@@ -137,6 +152,7 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
 
     #4.7 Haploblock == CDS
     echo ">>> Annotating haploblocks with CDS..."
+
     bedtools intersect \
         -a "${OUTDIR}/${NAME}.bed" \
         -b "${CDS_GTF}" \
@@ -145,6 +161,7 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
 
     #4.8 Mapping statistics
     echo ">>> Calculating mapping statistics..."
+
     samtools flagstat \
         "${OUTDIR}/${NAME}.primary.bam" \
         > "${OUTDIR}/${NAME}_mapping_stats.txt"
