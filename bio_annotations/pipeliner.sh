@@ -1,3 +1,19 @@
+#!/usr/bin/env bash
+############
+##Create env
+conda create -n haploblock_mvp -c conda-forge -c bioconda \
+    minimap2 \
+    samtools \
+    bedtools 
+
+##Genome download
+wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/genes/hg38.knownGene.gtf.gz
+gunzip hg38.knownGene.gtf.gz
+
+wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/latest/hg38.fa.gz
+gunzip hg38.fa.gz
+############
+
 ##Pipeline
 set -euo pipefail
 
@@ -137,7 +153,6 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
 
     bedtools bamtobed \
         -i "${OUTDIR}/${NAME}.primary.bam" \
-        -name \
         > "${OUTDIR}/${NAME}.bed"
 
     #4.6 Haploblock == genes
