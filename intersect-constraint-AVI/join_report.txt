@@ -1,0 +1,117 @@
+==============================================================================
+JOIN REPORT: block constraint statistics x block AVI scores
+==============================================================================
+generated          : 2026-09-17T16:45:56
+input directory    : /mnt/user-data/uploads/HaploHash/intersect-constraint-AVI
+left  (AVI)        : block_avi_scores.tsv   rows = 39,074
+right (constraint) : block_cluster_stats.tsv   rows = 39,077
+
+------------------------------------------------------------------------------
+1. KEY COMPATIBILITY
+------------------------------------------------------------------------------
+A raw join on the block-name strings was attempted first and FAILED:
+  block_avi_scores.block_id     example: chr10_100064214_100292616
+  block_cluster_stats.block     example: chr10_100064214-100292616
+  shared raw strings            : 0
+  cause: the AVI file separates start and end with '_', the constraint
+         file with '-'. The strings are therefore never equal.
+
+The join was performed on the canonical coordinate key chrom:start-end,
+which both files carry as separate columns.
+  duplicate keys, AVI file          : 0
+  duplicate keys, constraint file   : 0
+
+------------------------------------------------------------------------------
+2. JOIN RESULT
+------------------------------------------------------------------------------
+  matched (both files)              : 39,074   (100.00% of AVI, 99.99% of constraint)
+  AVI only, no constraint record    : 0
+  constraint only, no AVI record    : 3
+
+  unmatched AVI blocks: none
+
+  unmatched constraint blocks:
+    chr12:1-599431
+    chr20:1-598702
+    chr9:1-707077
+
+------------------------------------------------------------------------------
+3. CONSISTENCY CHECK ON MATCHED ROWS
+------------------------------------------------------------------------------
+  rows with block length in both    : 39,074
+  length_bp == block_length         : 39,074
+  disagreements                     : 0
+
+------------------------------------------------------------------------------
+4. MATCHES PER CHROMOSOME
+------------------------------------------------------------------------------
+  chrom      matched  avi_only  cluster_only
+  chr1         3,048         0             0
+  chr2         3,088         0             0
+  chr3         2,578         0             0
+  chr4         2,435         0             0
+  chr5         2,338         0             0
+  chr6         2,287         0             0
+  chr7         2,088         0             0
+  chr8         1,973         0             0
+  chr9         1,747         0             1
+  chr10        1,968         0             0
+  chr11        1,827         0             0
+  chr12        1,903         0             1
+  chr13        1,390         0             0
+  chr14        1,249         0             0
+  chr15        1,210         0             0
+  chr16        1,322         0             0
+  chr17        1,235         0             0
+  chr18        1,222         0             0
+  chr19        1,004         0             0
+  chr20        1,054         0             1
+  chr21          597         0             0
+  chr22          669         0             0
+  chrX           842         0             0
+  TOTAL       39,074         0             3
+
+------------------------------------------------------------------------------
+5. MISSING VALUES IN PLOTTED MEASURES (matched rows)
+------------------------------------------------------------------------------
+  column                   n_missing    n_zero             min             max
+  n_clusters                       0         0               1           5,085
+  singleton_count                  0     3,337               0           5,079
+  dominance                        0         0      0.00137363               1
+  avi_max                          0         0         12.4848         89.4512
+  avi_top10_mean                   0         0         9.63792         78.9187
+  avi_top1_count                   0        87               0         142,619
+  avi_top1_fraction                0        87               0        0.280125
+  avi_top1_per_kb                  0        87               0         840.374
+  avi_top1_mean                   87         0         20.0126         28.4782
+  block_length                     0         0             724      6.4164e+06
+
+  note: rows with a missing value in either axis are dropped from that
+        panel only; the per-panel n is given in section 6.
+
+------------------------------------------------------------------------------
+6. PER-PANEL SAMPLE SIZE AND RANK CORRELATION
+------------------------------------------------------------------------------
+  panel  x                 y                           n   spearman           p
+  a      n_clusters        avi_max                39,074      0.153    6.4e-203
+  b      n_clusters        avi_top10_mean         39,074      0.161   6.65e-226
+  c      n_clusters        avi_top1_count         39,074      0.203    < 1e-300
+  d      n_clusters        avi_top1_fraction      39,074      0.104    7.15e-94
+  e      n_clusters        avi_top1_per_kb        39,074      0.104    1.43e-93
+  f      n_clusters        avi_top1_mean          38,987      0.105    1.02e-95
+  g      singleton_count   avi_max                39,074      0.165   3.98e-236
+  h      singleton_count   avi_top10_mean         39,074      0.174   3.45e-264
+  i      singleton_count   avi_top1_count         39,074      0.220    < 1e-300
+  j      singleton_count   avi_top1_fraction      39,074      0.103    1.58e-92
+  k      singleton_count   avi_top1_per_kb        39,074      0.103     3.3e-92
+  l      singleton_count   avi_top1_mean          38,987      0.112   2.48e-109
+  m      dominance         avi_max                39,074     -0.035    5.28e-12
+  n      dominance         avi_top10_mean         39,074     -0.037    3.13e-13
+  o      dominance         avi_top1_count         39,074     -0.039    1.17e-14
+  p      dominance         avi_top1_fraction      39,074     -0.050    6.25e-23
+  q      dominance         avi_top1_per_kb        39,074     -0.050    7.21e-23
+  r      dominance         avi_top1_mean          38,987     -0.030     5.4e-09
+
+==============================================================================
+END OF REPORT
+==============================================================================
