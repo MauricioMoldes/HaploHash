@@ -109,7 +109,57 @@ are being built in parallel by the tracks below and are not yet wired together.
 
 ## Findings
 
-_To be filled in as tracks report results._
+## Findings
+
+### Re-identification exposure
+
+Computed from `block_stats.tsv`: 39,077 haploblocks, 5,096 haplotypes (2,548
+individuals, 1000G). Code and full output in [`reid/`](reid/).
+
+A haplotype that falls in a singleton cluster is uniquely identified by that
+block alone, so exposure follows directly from the per-block cluster statistics
+without running any assignment step.
+
+| | |
+|---|---|
+| Singleton clusters genome-wide | 7,712,127 |
+| Blocks containing at least one singleton | 35,740 of 39,077 (91.5%) |
+| Mean blocks at which an individual is a singleton | 3,027 |
+
+Re-identification is not a tail risk here. Every individual in the cohort is
+uniquely identified at roughly three thousand blocks.
+
+### Cost of mitigation
+
+Two suppression strategies differ by two orders of magnitude in cost for the
+same protection:
+
+| Strategy | Cost |
+|---|---|
+| Suppress whole blocks until no singletons remain | 35,740 of 39,077 blocks (91.5%) |
+| Suppress singleton clusters, retain the block | 7.7M of 199M haplotype-block observations (3.87%) |
+
+Block-level suppression removes almost the entire dataset. Cluster-level
+suppression removes 3.87% of observations and eliminates singleton exposure
+entirely. This is the K=1 case; extending the cost curve to higher K requires
+the full cluster size distribution rather than singleton counts alone.
+
+### Structure
+
+`n_clusters` correlates with `singleton_count` at +0.987, and at the median
+block 61% of clusters contain exactly one haplotype. Cluster count is therefore
+close to a direct measure of exposure. Entropy correlates at +0.774 and
+dominance at −0.401.
+
+### Caveat
+
+The most exposed blocks are chr20:1-598702, chr12:1-599431, chr9:1-707077 and
+chr16:42277286-46949080 — three telomeres and a centromere. chr20:1-598702 has
+5,090 clusters across 5,096 haplotypes, meaning nearly every haplotype is
+unique there. These are among the hardest regions in the genome to assemble, so
+some of that apparent diversity may be technical rather than biological. The
+headline figures would shift if these regions were excluded.
+
 
 ## Team
 
