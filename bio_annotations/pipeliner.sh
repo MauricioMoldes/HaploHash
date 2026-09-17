@@ -2,7 +2,7 @@
 set -euo pipefail
 #0. Input files 
 ##reference genome (fasta/gtf)
-REFERENCE="/dcai/projects/iu_0142/ref_genome/hg38.fa"
+REFERENCE="/dcai/projects/iu_0142/ref_genome/hg38.fna"
 GTF="/dcai/projects/iu_0142/ref_genome/hg38.knownGene.gtf"
 ##haploblocks of interest, maybe a dir makes more sense
 HAPLOBLOCKS_DIR="/dcai/projects/iu_0142/team11/data/haploblock_sequences/1000G/chr22/clusters"
@@ -28,16 +28,7 @@ command -v bedtools >/dev/null 2>&1 || {
     exit 1
 }
 
-#!/bin/bash
-
-HAPLOBLOCKS_DIR="haploblocks"
-REFERENCE="hg38.fna"
-GTF="hg38.gtf"
-OUTDIR="results"
-
-mkdir -p "$OUTDIR"
-
-#1. Index reference genome
+#2. Index reference genome
 echo ">>> Indexing reference genome..."
 
 if [ ! -f "${REFERENCE}.fai" ]; then
@@ -48,7 +39,7 @@ if [ ! -f "${REFERENCE}.mmi" ]; then
     minimap2 -d "${REFERENCE}.mmi" "${REFERENCE}"
 fi
 
-#2. Extract genes and CDS from GTF 
+#3. Extract genes and CDS from GTF 
 echo ">>> Preparing GTF annotations..."
 
 GENES_GTF="${OUTDIR}/genes.gtf"
@@ -62,13 +53,13 @@ if [ ! -f "$CDS_GTF" ]; then
     awk '$3 == "CDS"' "${GTF}" > "$CDS_GTF"
 fi
 
-#3. Process each haploblock
+#4. Process each haploblock
 for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
     [[ -e "$HAPLOBLOCKS" ]] || continue
     #Name change
     NAME=$(basename "$HAPLOBLOCKS" _all_seqs.fasta)
 
-    #3.1 Map haploblocks to GRCh38
+    #4.1 Map haploblocks to GRCh38
     echo ">>> Mapping haploblocks..."
 
     minimap2 \
@@ -77,7 +68,7 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
         "${HAPLOBLOCKS}" \
         > "${OUTDIR}/${NAME}.sam"
 
-    #3.2 SAM == sorted BAM
+    #4.2 SAM == sorted BAM
     echo ">>> Converting SAM to sorted BAM..."
 
     samtools view \
@@ -88,7 +79,7 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
 
     samtools index "${OUTDIR}/${NAME}.bam"
 
-    #3.3 Keep primary alignments
+    #4.3 Keep primary alignments
     echo ">>> Extracting primary alignments..."
     samtools view \
         -b \
@@ -98,14 +89,14 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
 
     samtools index "${OUTDIR}/${NAME}.primary.bam"
 
-    #3.4 BAM == BED
+    #4.4 BAM == BED
     echo ">>> Creating BED..."
     bedtools bamtobed \
         -i "${OUTDIR}/${NAME}.primary.bam" \
         -name \
         > "${OUTDIR}/${NAME}.bed"
 
-    #3.5 Haploblock == genes
+    #4.5 Haploblock == genes
     echo ">>> Annotating haploblocks with genes..."
     bedtools intersect \
         -a "${OUTDIR}/${NAME}.bed" \
@@ -114,7 +105,7 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
         -wb \
         > "${OUTDIR}/${NAME}_haploblock_genes.tsv"
 
-    #3.6 Haploblock == CDS
+    #4.6 Haploblock == CDS
     echo ">>> Annotating haploblocks with CDS..."
     bedtools intersect \
         -a "${OUTDIR}/${NAME}.bed" \
@@ -122,7 +113,7 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
         -wao \
         > "${OUTDIR}/${NAME}_haploblock_cds.tsv"
 
-    #3.7 Mapping statistics
+    #4.7 Mapping statistics
     echo ">>> Calculating mapping statistics..."
     samtools flagstat \
         "${OUTDIR}/${NAME}.primary.bam" \
