@@ -16,7 +16,7 @@ Haploblock-level functional annotation + privacy-preserving genomic hashes. 16â€
 
 ![workflow](docs/image.png)
 ![workflow](docs/steps_1_3_r_tools_R.png)
-
+![workflow](docs/image_updated.png)
 
 ## The problem
 
