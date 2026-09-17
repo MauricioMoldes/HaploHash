@@ -28,10 +28,23 @@ Each dot is one haploblock; height = what percent of all possible mutations insi
 
 ![avi_manhattan_maxphred.png](docs/avi_manhattan_maxphred.png) — same haploblocks; height = the single most disruptive possible mutation found anywhere inside that block.
 
-![avi_distribution_histogram.png](docs/avi_distribution_histogram.png) — across all 39,074 blocks, how many blocks have a little vs a lot of their mutation-space in that top-disruption tier.
+### Distribution histogram divided into blocks
 
+![avi_distribution_histogram.png](docs/avi_distribution_histogram.png) 
 
-![avi_chromosome_summary.png](docs/avi_chromosome_summary.png) — same top-disruption-tier percentage, averaged per chromosome, so you can compare chromosomes against each other.
+Across all 39,074 blocks, how many blocks have a little vs a lot of their mutation-space in that top-disruption tier. Each block gets sorted into one bucket based on "what % of its possible mutations are in the top-disruption tier" (same number as the y-axis in chart 1, just x-axis here). Bar height = how many blocks landed in that bucket.
+
+The tallest bar, at the far left (0–0.2%), contains ~3,192 blocks — meaning most haploblocks have almost none of their mutation-space in the disruptive tier.
+
+### Comparing chromosome AVI scores 
+
+![avi_chromosome_summary.png](docs/avi_chromosome_summary.png) 
+
+Top-disruption-tier percentage, averaged per chromosome, so we can compare chromosomes against each other.
+
+* AVI is Atlas Variant Impact score, from AlphaGenome's Atlas model — for a single DNA letter change (SNV), it predicts how much that change would disrupt gene function (expression, splicing, regulation)
+
+* PHRED - how that impact score is reported: a rank against every other possible mutation genome-wide. PHRED 20 means "this specific mutation's predicted impact is worse than 99% of all possible mutations" / "unusually disruptive."
 
 ## The problem
 
