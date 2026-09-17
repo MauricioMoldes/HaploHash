@@ -80,6 +80,11 @@ for HAPLOBLOCKS in "$HAPLOBLOCKS_DIR"/*_all_seqs.fasta; do
     #Name change
     NAME=$(basename "$HAPLOBLOCKS" _all_seqs.fasta)
 
+    if [[ -f "${OUTDIR}/${NAME}_haploblock_cds.tsv" ]]; then
+        echo ">>> ${NAME} already exists, skipping..."
+        continue
+    fi
+    
     #4.1 Prepare FASTA for mapping
     echo ">>> Checking FASTA..."
     CLEAN_FASTA="${OUTDIR}/${NAME}.clean.fasta"
