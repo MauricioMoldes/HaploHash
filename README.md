@@ -18,6 +18,21 @@ Haploblock-level functional annotation + privacy-preserving genomic hashes. 16�
 ![workflow](docs/steps_1_3_r_tools_R.png)
 ![workflow](docs/image_updated.png)
 
+## Quality control
+### Top 1 fraction
+![avi_manhattan_top1fraction](docs/avi_manhattan_top1fraction.png)
+
+Each dot is one haploblock; height = what percent of all possible mutations inside it would land in that "worse than 99% of all mutations" tier.
+
+### Strongest AVI score per block
+
+![avi_manhattan_maxphred.png](docs/avi_manhattan_maxphred.png) — same haploblocks; height = the single most disruptive possible mutation found anywhere inside that block.
+
+![avi_distribution_histogram.png](docs/avi_distribution_histogram.png) — across all 39,074 blocks, how many blocks have a little vs a lot of their mutation-space in that top-disruption tier.
+
+
+![avi_chromosome_summary.png](docs/avi_chromosome_summary.png) — same top-disruption-tier percentage, averaged per chromosome, so you can compare chromosomes against each other.
+
 ## The problem
 
 Genomic data sharing sits on a tension: block-level haplotype structure carries strong functional
