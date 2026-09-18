@@ -230,6 +230,25 @@ This is a uniform within-block baseline without mutation-context or callability
 adjustment. The frequency plot uses AC/AN; AVI's frequency-based training makes
 it a consistency check.
 
+### GTEx eQTL comparison
+
+```bash
+GTEX_CONNECTIONS=4 bash annotate_atlas/gtex_run.sh /path/to/shared/storage/gtex
+```
+
+Downloads GTEx v8 results for all 49 tissues (about 185 GB before intermediates) and runs CPU jobs on Slurm `medium`.
+Parallel downloads use `aria2c`; omit `GTEX_CONNECTIONS` to use `curl`.
+Results go in `annotate_atlas/gtex/results/`; downloaded data and intermediates
+are stored on shared storage and excluded from git. `tissues.tsv` lists the public source URLs.
+
+Counts distinct tested autosomal SNVs, using GTEx's official significant-pair
+calls. Compares the highest and lowest `avi_top1_fraction` quintiles after stratifying by
+MAF, distance to the closest tested TSS, and number of genes tested. Lead variants
+and fine-mapped variants (DAP-G PIP ≥0.5) are separate checks. Intervals use 1,000
+bootstrap resamples of 5 Mb regions. These are descriptive associations; tissues
+share donors and variants, and the intervals are not corrected for multiple comparisons.
+`blood_sensitivity.tsv` checks finer covariate bins and exclusion of chromosome 6.
+
 ## From variant scores to haploblocks
 
 There are two different outputs. Keep them separate.
