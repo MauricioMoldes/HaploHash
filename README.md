@@ -205,6 +205,18 @@ python3 annotate_atlas/score_blocks.py \
 
 The full static SNV Atlas contains roughly nine billion alternate alleles, so the genome-wide run belongs on the cluster and should read the local download, not the API.
 
+### chr22 pilot QC
+
+```bash
+python3 -m pip install -r annotate_atlas/requirements.txt
+python3 annotate_atlas/qc_variant_parquet.py
+```
+
+Writes cleaned SNVs, excluded rows, and block counts to `annotate_atlas/qc/` for
+the 12 pilot blocks. Retains distinct alleles with `AC>0`, joins blocks by
+coordinates, and adds `AF_from_counts` and `MAF_from_counts`. Original AF and
+missing AVI scores are kept and indels are checked separately.
+
 ## From variant scores to haploblocks
 
 There are two different outputs. Keep them separate.
