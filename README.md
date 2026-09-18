@@ -208,14 +208,27 @@ The full static SNV Atlas contains roughly nine billion alternate alleles, so th
 ### chr22 pilot QC
 
 ```bash
-python3 -m pip install -r annotate_atlas/requirements.txt
-python3 annotate_atlas/qc_variant_parquet.py
+uv run --project annotate_atlas python annotate_atlas/qc_variant_parquet.py
 ```
 
 Writes cleaned SNVs, excluded rows, and block counts to `annotate_atlas/qc/` for
 the 12 pilot blocks. Retains distinct alleles with `AC>0`, joins blocks by
 coordinates, and adds `AF_from_counts` and `MAF_from_counts`. Original AF and
 missing AVI scores are kept and indels are checked separately.
+
+### chr22 depletion baseline
+
+```bash
+uv run --project annotate_atlas python annotate_atlas/pilot_depletion.py
+```
+
+Writes a per-block TSV and two plots to `annotate_atlas/depletion/`.
+Expected high-AVI alleles = observed scored SNVs × `avi_top1_count / n_scored`;
+the pooled ratio is total observed / sum of block expectations. AVI ≥20 defines
+high scores; unscored SNVs are omitted and undefined ratios are blank.
+This is a uniform within-block baseline without mutation-context or callability
+adjustment. The frequency plot uses AC/AN; AVI's frequency-based training makes
+it a consistency check.
 
 ## From variant scores to haploblocks
 
